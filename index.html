@@ -3,10 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="JavaScript/script.js"></script>
-    <title>Project</title>
+    <link rel="stylesheet" href="style/style.css">
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
+    <title>QWits - AI powered learning assistant</title>
 </head>
 <body>
-    
+    <header>
+        <h1>QWits</h1>
+        <p>An AI study assistant that instantly creates Q&As, short notes, or mind maps with a click of a button.</p>
+    </header>
+    <section id="userInput">
+        <div class="userInputContainer">
+            <div id="requirementSelector" class="inputRow">
+                <label for="requirement">What are you looking for?</label>
+                <select name="requirement" id="requirement" class="dropdown" required>
+                    <option value="Q&A">Q&A</option>
+                    <option value="Short notes">Short notes</option>
+                    <option value="Mind maps">Mind maps</option>
+                </select>
+            </div>
+            <div id="gradeSelector" class="inputRow">
+                <label for="grade">Select your grade</label>
+                <select name="grade" id="grade" class="dropdown" required>
+                    <option value="grade 12">Grade 12</option>
+                    <option value="grade 13">Grade 13</option>
+                </select>
+            </div>
+            <div id="subjectSelector" class="inputRow">
+                <label for="subject">Select the subject you want</label>
+                <select name="subject" id="subject" class="dropdown" required>
+                    <option value="Combined Mathematics">Combined Mathematics</option>
+                    <option value="Physics">Physics</option>
+                </select>
+            </div>
+            <div id="durationSelector" class="inputRow">
+                <label for="duration">Select the duration you want</label>
+                <select name="duration" id="duration" class="dropdown" required>
+                    <option value="1st term">1<sup>st</sup> Term</option>
+                    <option value="2nd term">2<sup>nd</sup> Term</option>
+                    <option value="3rd term">3<sup>rd</sup> Term</option>
+                    <option value="1st and 2nd terms">From 1<sup>st</sup> Term to 2<sup>nd</sup></option>
+                    <option value="2nd and 3rd terms">From 2<sup>nd</sup> Term to 3<sup>rd</sup></option>
+                    <option value="entire">Entire year</option>
+                </select>
+            </div>
+
+
+            <button id="sendToAgent" type="submit">Generate</button>
+        </div>
+    </section>
+
+    <div style="display: flex; justify-content: center;">
+        <l-quantum id="loadingAnim" style="margin-top: 2em;" size="45" speed="1.75" color="white"></l-quantum>
+    </div>
+
+    <div id="output" class="container"> </div>
+
+    <footer>
+        <p>&copy; <a href="https://github.com/LasithBhagya">Lasith Bhagya</a> - All rights reserved.</p>
+    </footer>
+
+    <script src="JavaScript/script.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
 </body>
 </html>
