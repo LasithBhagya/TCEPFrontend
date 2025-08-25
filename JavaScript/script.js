@@ -10,7 +10,7 @@ async function getAIResponse(_prompt) {
         headers: {
             'Content-Type': 'application/json',
             'Magic-Word': 'Abracadabra',
-            'Access-Control-Allow-Origin': 'http://localhost:3000',
+            'Access-Control-Allow-Origin': 'https://lasithbhagya.github.io/TCEPFrontend/',
             'Access-Control-Allow-Credentials': 'true'
         },
         body: JSON.stringify({ _prompt })
