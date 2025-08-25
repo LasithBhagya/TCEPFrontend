@@ -97,6 +97,11 @@ header > #languageSelector input:focus-visible {
     border-radius: 1em;
 }
 
+.hr {
+    height: 0px;
+    visibility: hidden;
+}
+
 #btn {
     top: 0;
     left: 0;
@@ -161,7 +166,7 @@ button.toggle-btn {
     justify-content: space-between;
 }
 
-#unitSelection {
+.unitSelection {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5em;
@@ -229,6 +234,43 @@ button#sendToAgent {
     color: white;
 }
 
+#output > div > ol, #output > div > ul {
+    display: flex;
+    flex-direction: column;
+    row-gap: 1rem;
+}
+svg {
+    font-family: "Fredoka", sans-serif !important;
+}
+
+#downloadMindMap {
+    display: none;
+    position: relative;
+    top: -5rem;
+    left: calc(100% - 5rem);
+    box-sizing: border-box;
+    width: fit-content;
+    z-index: 1000;
+}
+#downloadMindMap > button {
+    background-color: #09970e;
+    border: none;
+    border-radius: 1rem;
+    width: 3rem;
+    height: 3rem;
+    cursor: pointer;
+    box-shadow: 0 0 10px 2px #000;
+    transition: background-color 0.2s ease-in-out;
+}
+#downloadMindMap > button:hover {
+    background-color: #4CAF50;
+}
+#downloadMindMap > button > img {
+    width: 1.5rem;
+    height: 1.5rem;
+    filter: invert(0.95);
+}
+
 #loadingAnim {
     display: none;
     flex-direction: column;
@@ -288,6 +330,14 @@ footer a {
         width: auto;
         flex-direction: column;
         margin-bottom: 1em;
+        align-items: center;
+    }
+    .hr {
+        width: 80%;
+        height: 2px;
+        visibility: visible;
+        background-color: #222;
+        border-radius: 2px;
     }
     #btn {
         width: 100%;

@@ -1,6 +1,15 @@
+mermaid.initialize({ 
+    startOnLoad: true,
+    themeVariables: {
+        fontFamily: 'Fredoka, sans-serif',
+    }
+});
+
+
 document.getElementById("loadingAnim").style.display = "none";
 var language = "English";
-let tagList = [];
+let tagListSN = [];
+let tagListMM = [];
 
 // const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
 
@@ -43,7 +52,7 @@ async function getAIResponse(_prompt) {
     console.log(data);
     console.log(response.status);
     document.getElementById("loadingAnim").style.display = "none";
-    return data.response;
+    return data.output;
 }
 
 // document.getElementById("sendToAgent").addEventListener("click", () => {
@@ -67,7 +76,7 @@ function showAnError(error) {
 }
 
 
-function generate(_prompt) {
+function generate(_prompt, _reload) {
     document.getElementById("loadingAnim").style.display = "flex";
     getAIResponse(_prompt).then(result => {
         document.getElementById("output").innerHTML = result;
@@ -75,6 +84,16 @@ function generate(_prompt) {
         document.getElementById("output").style.alignItems = "flex-start";
         document.getElementById("output").style.textAlign = "left";
         MathJax.typeset();  // LaTeX rendering (MathJax)
+        switch (_reload) {
+            case "m":
+                mermaid.run();  // Mermaid rendering
+                break;
+            case "l":
+                MathJax.typeset();  // LaTeX rendering (MathJax)
+                break;
+            default:
+                break;
+        }
     });
 }
 
@@ -85,7 +104,7 @@ function generateQnA() {
     const noq = document.getElementById("noqqna").value;
     const syllabusSection = document.getElementById("syllabusSectionqna").value;
     const _prompt = `Generate ${noq} ${difficulty} difficulty level questions within the ${syllabusSection} of the ${grade} ${subject} Syllabus in only ${language} language.`;
-    generate(_prompt);
+    generate(_prompt, 'l');
 
     console.log('Selected variables:', grade, subject, difficulty, noq, syllabusSection);
     console.log('Prompt:', _prompt);
@@ -93,11 +112,11 @@ function generateQnA() {
 function generateShortNotes() {
     const grade = document.getElementById("gradesn").value;
     const subject = document.getElementById("subjectsn").value;
-    const units = tagList.join(', ');
+    const units = tagListSN.join(', ');
 
     if (units.length !== 0) {
         const _prompt = `Generate a short note on ${units} unit(s) of ${grade} ${subject} in only ${language} language.`;
-        generate(_prompt);
+        generate(_prompt, 'l');
         console.log('Selected variables:', grade, subject, units);
         console.log('Prompt:', _prompt);
     } else {
@@ -105,9 +124,69 @@ function generateShortNotes() {
     }
 }
 function generateMindMaps() {
-    const _prompt = 'Generate a mind map on the 1st and 2nd terms of the grade 12 physics Syllabus.';
-    generate(_prompt);
+    const grade = document.getElementById('grademm').value;
+    const subject = document.getElementById("subjectmm").value;
+    const units = tagListMM.join(', ');
+
+    if (units.length !== 0) {
+        const _prompt = `Generate a mind map containing every important part on ${units} unit(s) of the ${grade} ${subject} in only ${language} language. (strictly follow the guidelines provided in the System Message)`;
+        document.getElementById("output").classList.add('mermaid');
+        generate(_prompt, 'm');
+        console.log('Selected variables:', grade, subject, units);
+        console.log('Prompt:', _prompt);
+    } else {
+        showAnError('Please select at least one unit.');
+    }
 }
+
+
+
+// Download mind map as an PNG file
+function downloadMindMap() {
+    const svg = document.getElementById('output').querySelector('svg');
+    if (!svg) {
+        alert("Mind map is not rendered yet!");
+        return;
+    }
+
+    // Serialize SVG
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(svgBlob);
+
+    const img = new Image();
+
+    // Optional: preserve styles/fonts from the page
+    const svgStyle = getComputedStyle(svg);
+    img.onload = function () {
+        const rect = svg.getBoundingClientRect();
+        const scale = 4; // scale up for retina resolution
+        const canvas = document.createElement('canvas');
+        canvas.width = rect.width * scale;
+        canvas.height = rect.height * scale;
+
+        const ctx = canvas.getContext('2d');
+        ctx.scale(scale, scale); // scale context
+        ctx.drawImage(img, 0, 0, rect.width, rect.height);
+
+        // Trigger download
+        const pngUrl = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = pngUrl;
+        link.download = 'mindmap.png';
+        link.click();
+
+        URL.revokeObjectURL(url);
+    };
+
+    img.onerror = function (e) {
+        console.error("Failed to load SVG as image", e);
+        URL.revokeObjectURL(url);
+    };
+
+    img.src = url;
+}
+
 
 // getAIResponse(_prompt).then(result => {
 //     document.getElementById("output").innerHTML = result;
@@ -134,6 +213,9 @@ function qna() {
     _shortnotes.classList.remove("active");
     _mindmaps.classList.remove("active");
     console.log("Q&A");
+
+    // Disable the download button
+    document.getElementById("downloadMindMap").style.display = "none";
 }
 
 function shortnotes() {
@@ -149,6 +231,9 @@ function shortnotes() {
     _shortnotes.classList.add("active");
     _mindmaps.classList.remove("active");
     console.log("Short Notes");
+
+    // Disable the download button
+    document.getElementById("downloadMindMap").style.display = "none";
 }
 
 function mindmaps() {
@@ -164,19 +249,40 @@ function mindmaps() {
     _shortnotes.classList.remove("active");
     _mindmaps.classList.add("active");
     console.log("Mind Maps");
+
+    // Enable the download button
+    document.getElementById("downloadMindMap").style.display = "block";
+    document.getElementById("output").innerHTML = ' ';
 }
 
 
-function updateSNUnitList() {
-    const grade = document.getElementById("gradesn").value;
-    const subject = document.getElementById("subjectsn").value;
-    const unitSelect = document.getElementById("unitssn");
+function updateUnitList(key) {
+    var grade, subject, unitSelect, unitSelection;
+    switch (key) {
+        case 'SN':
+            grade = document.getElementById("gradesn").value;
+            subject = document.getElementById("subjectsn").value;
+            unitSelect = document.getElementById("unitssn");
+            unitSelection = document.getElementById("unitSelectionSN");
+            break;
+        case 'MM':
+            grade = document.getElementById("grademm").value;
+            subject = document.getElementById("subjectmm").value;
+            unitSelect = document.getElementById("unitsmm");
+            unitSelection = document.getElementById("unitSelectionMM");
+            break;
+    
+        default:
+            break;
+    }
 
     // Clear existing options
     unitSelect.innerHTML = '';
     // Clear the tag list and displayed tags
-    tagList = [];
-    document.getElementById("unitSelection").innerHTML = '';
+    if (key === 'SN') tagListSN = [];
+    else tagListMM = [];
+    // document.getElementById("unitSelection").innerHTML = '';
+    unitSelection.innerHTML = '';
 
     // Define unit options based on grade and subject
     let units = {};
@@ -305,8 +411,8 @@ function updateSNUnitList() {
 
 
 // Enable a specific option in the dropdown
-function enableOption(unit) {
-    const dropdown = document.getElementById('unitssn');
+function enableOption(unit, dropdown) {
+    // const dropdown = document.getElementById('unitssn');
     for (const group of dropdown.getElementsByTagName('optgroup')) {
         for (const option of group.getElementsByTagName('option')) {
             if (option.value === unit) {
@@ -318,8 +424,8 @@ function enableOption(unit) {
 }
 
 // Disable a specific option in the dropdown
-function disableOption(unit) {
-    const dropdown = document.getElementById('unitssn');
+function disableOption(unit, dropdown) {
+    // const dropdown = document.getElementById('unitssn');
     for (const group of dropdown.getElementsByTagName('optgroup')) {
         for (const option of group.getElementsByTagName('option')) {
             if (option.value === unit) {
@@ -330,10 +436,23 @@ function disableOption(unit) {
     }
 }
 
-function addTag() {
-    const unitSelect = document.getElementById('unitssn');
+function addTag(key) {
+    var unitSelect, unitSelection;
+    switch (key) {
+        case 'SN':
+            unitSelect = document.getElementById('unitssn');
+            unitSelection = document.getElementById('unitSelectionSN');
+            break;
+        case 'MM':
+            unitSelect = document.getElementById('unitsmm');
+            unitSelection = document.getElementById('unitSelectionMM');
+    
+        default:
+            break;
+    }
+    // const unitSelect = document.getElementById('unitssn');
     const selectedUnit = unitSelect.value;
-    if (!selectedUnit) return;  // If no unit is selected, do nothing
+    if (!selectedUnit) return;  // If no unit is selected, do nothing (fail safe)
 
 
     // Create a tag for the selected unit
@@ -348,19 +467,24 @@ function addTag() {
         tag.remove();
 
         // Enable the option back in the dropdown
-        enableOption(selectedUnit);
-        tagList.pop(selectedUnit);
+        enableOption(selectedUnit, unitSelect);
+        if (key === 'SN') tagListSN.pop(selectedUnit);
+        else tagListMM.pop(selectedUnit);
     };
 
     tag.appendChild(closeButton);
-    document.getElementById('unitSelection').appendChild(tag);
+    // document.getElementById('unitSelection').appendChild(tag);
+    unitSelection.appendChild(tag);
 
     // Disable the selected unit option in the dropdown
-    disableOption(selectedUnit);
-    tagList.push(selectedUnit);
+    disableOption(selectedUnit, unitSelect);
+    if (key === 'SN') tagListSN.push(selectedUnit);
+    else tagListMM.push(selectedUnit);
 }
 
-updateSNUnitList(); // Initial call to populate units based on default selections
+// Update the unit list
+updateUnitList('SN');
+updateUnitList('MM');
 
 const inputs = document.querySelectorAll(".input");
 

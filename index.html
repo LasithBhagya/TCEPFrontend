@@ -9,6 +9,11 @@
     <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.19/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.13.19/dist/katex.min.js"></script> -->
+    <!-- <script type="module"> -->
+        <!-- import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs"; -->
+        <!-- mermaid.initialize({ startOnLoad: true }); -->
+    <!-- </script> -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
     <title>QWits - AI powered learning assistant</title>
 </head>
 <body>
@@ -29,7 +34,9 @@
          <div class="button-box">
             <div id="btn"></div>
             <button type="button" class="toggle-btn" onclick="qna()"><b>Q&A</b></button>
+            <div class="hr"></div>
             <button type="button" class="toggle-btn" onclick="shortnotes()"><b>Short Notes</b></button>
+            <div class="hr"></div>
             <button type="button" class="toggle-btn" onclick="mindmaps()"><b>Mind Maps</b></button>
         </div>
         <div class="form-box">
@@ -81,23 +88,23 @@
             <div id="shortnotes" class="userInputContainer">
                 <div id="gradeSelector" class="inputRow">
                     <label for="gradesn">Grade</label>
-                    <select name="gradesn" id="gradesn" class="inputBox" onchange={updateSNUnitList()} required>
+                    <select name="gradesn" id="gradesn" class="inputBox" onchange="updateUnitList('SN')" required>
                         <option value="grade 12">Grade 12</option>
                         <option value="grade 13">Grade 13</option>
                     </select>
                 </div>
                 <div id="subjectSelector" class="inputRow">
                     <label for="subjectsn">Subject</label>
-                    <select name="subjectsn" id="subjectsn" class="inputBox" onchange={updateSNUnitList()} required>
+                    <select name="subjectsn" id="subjectsn" class="inputBox" onchange="updateUnitList('SN')" required>
                         <option value="Combined Mathematics">Combined Mathematics</option>
                         <option value="Physics">Physics</option>
                     </select>
                 </div>
                 <div id="durationSelector" class="inputRow">
                     <label for="unitssn">Unit(s)</label>
-                    <select name="unitssn" id="unitssn" class="inputBox" onchange={addTag()} required></select>
+                    <select name="unitssn" id="unitssn" class="inputBox" onchange="addTag('SN')" required></select>
                 </div>
-                <div id="unitSelection" class="inputRow"></div>
+                <div id="unitSelectionSN" class="unitSelection"></div>
 
 
                 <button id="sendToAgent" type="submit" onclick={generateShortNotes()}>Generate</button>
@@ -105,30 +112,24 @@
             <!-- Mind maps -->
             <div id="mindmaps" class="userInputContainer">
                 <div id="gradeSelector" class="inputRow">
-                    <label for="grade">Select your grade</label>
-                    <select name="grade" id="grade" class="inputBox" required>
+                    <label for="grademm">Grade</label>
+                    <select name="grademm" id="grademm" class="inputBox" onchange="updateUnitList('MM')" required>
                         <option value="grade 12">Grade 12</option>
                         <option value="grade 13">Grade 13</option>
                     </select>
                 </div>
                 <div id="subjectSelector" class="inputRow">
-                    <label for="subject">Select the subject you want</label>
-                    <select name="subject" id="subject" class="inputBox" required>
+                    <label for="subjectmm">Subject</label>
+                    <select name="subjectmm" id="subjectmm" class="inputBox" onchange="updateUnitList('MM')" required>
                         <option value="Combined Mathematics">Combined Mathematics</option>
                         <option value="Physics">Physics</option>
                     </select>
                 </div>
                 <div id="durationSelector" class="inputRow">
-                    <label for="duration">Select the duration you want</label>
-                    <select name="duration" id="duration" class="inputBox" required>
-                        <option value="1st term">1<sup>st</sup> Term</option>
-                        <option value="2nd term">2<sup>nd</sup> Term</option>
-                        <option value="3rd term">3<sup>rd</sup> Term</option>
-                        <option value="1st and 2nd terms">From 1<sup>st</sup> Term to 2<sup>nd</sup></option>
-                        <option value="2nd and 3rd terms">From 2<sup>nd</sup> Term to 3<sup>rd</sup></option>
-                        <option value="entire">Entire year</option>
-                    </select>
+                    <label for="unitsmm">Unit(s)</label>
+                    <select name="unitsmm" id="unitsmm" class="inputBox" onchange="addTag('MM')" required> </select>
                 </div>
+                <div id="unitSelectionMM" class="unitSelection"></div>
 
 
                 <button id="sendToAgent" type="submit" onclick={generateMindMaps()}>Generate</button>
@@ -140,11 +141,19 @@
         <div id="loadingAnim">
             <!-- <l-quantum size="45" speed="1.75" color="white"></l-quantum> -->
             <l-dot-pulse size="50" speed="1.2" color="white" ></l-dot-pulse>
-            <p>This will take a minute.</p>
+            <p>This may take a minute.</p>
         </div>
     </div>
 
-    <div id="output" class="container"> </div>
+    <section id="outputSection">
+        <div id="output" class="container"> </div>
+
+        <div id="downloadMindMap">
+            <button onclick="downloadMindMap()"><img src="img/download.png" alt="download"></button>
+        </div>
+    </section>
+
+    <div id="target"></div>
 
     <footer>
         <p>&copy; 2025 <a href="https://github.com/LasithBhagya">Lasith Bhagya</a>. All rights reserved.</p>
