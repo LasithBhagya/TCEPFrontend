@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -21,25 +23,125 @@ header p {
     font-size: 0.8rem;
     color: #ccc;
 }
+header > #languageSelector {
+    position: absolute;
+    top: 4rem;
+    right: 4rem;
+}
+header > #languageSelector label {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.langText {
+    font-weight: bold;
+    user-select: none;
+}
+.langBtn {
+    position: relative;
+    pointer-events: none;
+    margin: 0 0.8rem;
+    width: 3rem;
+    height: 2rem;
+    border-radius: 100vw;
+    box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
+    background-color: #062c07;
+}
+.langBtn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0.25rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background-color: #4CAF50;
+    transform: translate3d(0, -50%, 0);
+    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.6);
+    transition: transform 0.3s cubic-bezier(0.96, -0.11, 0, 1.12);
+}
+header > #languageSelector input:checked ~ .langBtn::after {
+    transform: translate3d(1rem, -50%, 0);
+}
+header > #languageSelector input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+header > #languageSelector input:focus-visible {
+    outline: 2px solid #4CAF50;
+    outline-offset: 2px;
+}
 
 #userInput {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 1em;
     box-sizing: border-box;
     border: none;
+    overflow-x: hidden;
+}
+
+.button-box {
+    width: auto;
+    margin: 0 auto 2em auto;
+    position: relative;
+    box-shadow: 0 0 20px 9px #000;
+    border-radius: 1em;
+}
+
+#btn {
+    top: 0;
+    left: 0;
+    position: absolute;
+    width: 10rem;
+    height: 100%;
+    background: linear-gradient(to right, #4CAF50, #09970e);
+    border-radius: 1em;
+    transition: .5s;
+}
+
+button.toggle-btn {
+    width: 10rem;
+    padding: 10px 30px;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    outline: none;
+    position: relative;
+    color: white;
+}
+
+.form-box {
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
 }
 
 .userInputContainer {
-    width: 50vw;
+    position: relative;
+    width: 40rem;
+    height: fit-content;
     display: flex;
     flex-direction: column;
     row-gap: 1em;
     padding: 1rem;
+    opacity: 0;
+    visibility: hidden;
     background-color: #222;
-    font-family: fredoka;
+    font-family: "Fredoka", sans-serif;
     border-radius: 1rem;
+    transition: 0.5s;
+}
+.userInputContainer.active {
+    opacity: 1;
+    visibility: visible;
 }
 
 .inputRow {
@@ -48,14 +150,43 @@ header p {
     justify-content: space-between;
 }
 
-.dropdown {
+#unitSelection {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    max-height: 6em;
+    overflow-y: auto;
+    width: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+    justify-content: flex-start;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: flex-end;
+    background-color: #09970e;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: default;
+}
+.tag p {
+    margin-left: 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.inputBox {
     width: 50%;
     padding: 0.5em;
     border-radius: 0.5em;
     border: none;
+    box-sizing: border-box;
     background-color: #333;
     color: white;
-    font-family: fredoka;
+    font-family: "Fredoka", sans-serif;
 }
 
 button#sendToAgent {
@@ -76,9 +207,24 @@ button#sendToAgent {
 }
 
 #output {
-    font-family: fredoka;
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.8em;
+    font-family: "Fredoka", sans-serif;
     font-size: 1rem;
     color: white;
+}
+
+#loadingAnim {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 1em;
+    margin-top: 2em;
+}
+#loadingAnim p {
+    color: #ccc;
+    font-size: 0.8rem;
 }
 
 
@@ -92,4 +238,11 @@ footer {
 footer a {
     color: #4CAF50;
     text-decoration: none;
+}
+
+
+
+/* startup settings */
+#qna, #shortnotes, #mindmaps {
+    left: calc(100% / 3);
 }

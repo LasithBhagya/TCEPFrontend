@@ -4,67 +4,152 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/style.css">
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/dotPulse.js"></script>
+    <script type="text/javascript" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.13.19/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.13.19/dist/katex.min.js"></script> -->
     <title>QWits - AI powered learning assistant</title>
 </head>
 <body>
     <header>
         <h1>QWits</h1>
         <p>An AI study assistant that instantly creates Q&As, short notes, or mind maps with a click of a button.</p>
+        <div id="languageSelector">
+            <label for="language">
+                <span class="language langText">English</span>
+                <input type="checkbox" name="language" id="language">
+                <span class="language langBtn"></span>
+                <span class="language langText">Sinhala</span>
+            </label>
+        </div>
     </header>
     <section id="userInput">
-        <div class="userInputContainer">
-            <div id="requirementSelector" class="inputRow">
-                <label for="requirement">What are you looking for?</label>
-                <select name="requirement" id="requirement" class="dropdown" required>
-                    <option value="Q&A">Q&A</option>
-                    <option value="Short notes">Short notes</option>
-                    <option value="Mind maps">Mind maps</option>
-                </select>
-            </div>
-            <div id="gradeSelector" class="inputRow">
-                <label for="grade">Select your grade</label>
-                <select name="grade" id="grade" class="dropdown" required>
-                    <option value="grade 12">Grade 12</option>
-                    <option value="grade 13">Grade 13</option>
-                </select>
-            </div>
-            <div id="subjectSelector" class="inputRow">
-                <label for="subject">Select the subject you want</label>
-                <select name="subject" id="subject" class="dropdown" required>
-                    <option value="Combined Mathematics">Combined Mathematics</option>
-                    <option value="Physics">Physics</option>
-                </select>
-            </div>
-            <div id="durationSelector" class="inputRow">
-                <label for="duration">Select the duration you want</label>
-                <select name="duration" id="duration" class="dropdown" required>
-                    <option value="1st term">1<sup>st</sup> Term</option>
-                    <option value="2nd term">2<sup>nd</sup> Term</option>
-                    <option value="3rd term">3<sup>rd</sup> Term</option>
-                    <option value="1st and 2nd terms">From 1<sup>st</sup> Term to 2<sup>nd</sup></option>
-                    <option value="2nd and 3rd terms">From 2<sup>nd</sup> Term to 3<sup>rd</sup></option>
-                    <option value="entire">Entire year</option>
-                </select>
-            </div>
+        <!-- Options -->
+         <div class="button-box">
+            <div id="btn"></div>
+            <button type="button" class="toggle-btn" onclick="qna()"><b>Q&A</b></button>
+            <button type="button" class="toggle-btn" onclick="shortnotes()"><b>Short Notes</b></button>
+            <button type="button" class="toggle-btn" onclick="mindmaps()"><b>Mind Maps</b></button>
+        </div>
+        <div class="form-box">
+            <!-- Q&A -->
+            <div id="qna" class="userInputContainer active">
+                <div id="gradeSelector" class="inputRow">
+                    <label for="gradeqna">Grade</label>
+                    <select name="grade" id="gradeqna" class="inputBox" required>
+                        <option value="grade 12">Grade 12</option>
+                        <option value="grade 13">Grade 13</option>
+                    </select>
+                </div>
+                <div id="subjectSelector" class="inputRow">
+                    <label for="subjectqna">Subject</label>
+                    <select name="subject" id="subjectqna" class="inputBox" required>
+                        <option value="Combined Mathematics">Combined Mathematics</option>
+                        <option value="Physics">Physics</option>
+                        <option value="ICT">ICT</option>
+                    </select>
+                </div>
+                <div id="difficulty" class="inputRow">
+                    <label for="difficultyqna">Difficulty</label>
+                    <select name="difficulty" id="difficultyqna" class="inputBox" required>
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+                <div id="noq" class="inputRow">
+                    <label for="noqqna">Number of questions</label>
+                    <input type="number" name="noq" id="noqqna" class="inputBox" min="1" max="20" value="5" required>
+                </div>
+                <div id="syllabusSectionSelector" class="inputRow">
+                    <label for="syllabusSectionqna">Syllabus Section</label>
+                    <select name="syllabusSection" id="syllabusSectionqna" class="inputBox" required>
+                        <option value="1st term">1<sup>st</sup> Term</option>
+                        <option value="2nd term">2<sup>nd</sup> Term</option>
+                        <option value="3rd term">3<sup>rd</sup> Term</option>
+                        <option value="1st and 2nd terms">From 1<sup>st</sup> Term to 2<sup>nd</sup></option>
+                        <option value="2nd and 3rd terms">From 2<sup>nd</sup> Term to 3<sup>rd</sup></option>
+                        <option value="entire">Entire year</option>
+                    </select>
+                </div>
 
 
-            <button id="sendToAgent" type="submit">Generate</button>
+                <button id="sendToAgent" type="submit" onclick={generateQnA()}>Generate</button>
+            </div>
+            <!-- Short notes -->
+            <div id="shortnotes" class="userInputContainer">
+                <div id="gradeSelector" class="inputRow">
+                    <label for="gradesn">Grade</label>
+                    <select name="gradesn" id="gradesn" class="inputBox" onchange={updateSNUnitList()} required>
+                        <option value="grade 12">Grade 12</option>
+                        <option value="grade 13">Grade 13</option>
+                    </select>
+                </div>
+                <div id="subjectSelector" class="inputRow">
+                    <label for="subjectsn">Subject</label>
+                    <select name="subjectsn" id="subjectsn" class="inputBox" onchange={updateSNUnitList()} required>
+                        <option value="Combined Mathematics">Combined Mathematics</option>
+                        <option value="Physics">Physics</option>
+                    </select>
+                </div>
+                <div id="durationSelector" class="inputRow">
+                    <label for="unitssn">Unit(s)</label>
+                    <select name="unitssn" id="unitssn" class="inputBox" onchange={addTag()} required></select>
+                </div>
+                <div id="unitSelection" class="inputRow"></div>
+
+
+                <button id="sendToAgent" type="submit" onclick={generateShortNotes()}>Generate</button>
+            </div>
+            <!-- Mind maps -->
+            <div id="mindmaps" class="userInputContainer">
+                <div id="gradeSelector" class="inputRow">
+                    <label for="grade">Select your grade</label>
+                    <select name="grade" id="grade" class="inputBox" required>
+                        <option value="grade 12">Grade 12</option>
+                        <option value="grade 13">Grade 13</option>
+                    </select>
+                </div>
+                <div id="subjectSelector" class="inputRow">
+                    <label for="subject">Select the subject you want</label>
+                    <select name="subject" id="subject" class="inputBox" required>
+                        <option value="Combined Mathematics">Combined Mathematics</option>
+                        <option value="Physics">Physics</option>
+                    </select>
+                </div>
+                <div id="durationSelector" class="inputRow">
+                    <label for="duration">Select the duration you want</label>
+                    <select name="duration" id="duration" class="inputBox" required>
+                        <option value="1st term">1<sup>st</sup> Term</option>
+                        <option value="2nd term">2<sup>nd</sup> Term</option>
+                        <option value="3rd term">3<sup>rd</sup> Term</option>
+                        <option value="1st and 2nd terms">From 1<sup>st</sup> Term to 2<sup>nd</sup></option>
+                        <option value="2nd and 3rd terms">From 2<sup>nd</sup> Term to 3<sup>rd</sup></option>
+                        <option value="entire">Entire year</option>
+                    </select>
+                </div>
+
+
+                <button id="sendToAgent" type="submit" onclick={generateMindMaps()}>Generate</button>
+            </div>
         </div>
     </section>
 
     <div style="display: flex; justify-content: center;">
-        <l-quantum id="loadingAnim" style="margin-top: 2em;" size="45" speed="1.75" color="white"></l-quantum>
+        <div id="loadingAnim">
+            <!-- <l-quantum size="45" speed="1.75" color="white"></l-quantum> -->
+            <l-dot-pulse size="50" speed="1.2" color="white" ></l-dot-pulse>
+            <p>This will take a minute.</p>
+        </div>
     </div>
 
     <div id="output" class="container"> </div>
 
     <footer>
-        <p>&copy; <a href="https://github.com/LasithBhagya">Lasith Bhagya</a> - All rights reserved.</p>
+        <p>&copy; 2025 <a href="https://github.com/LasithBhagya">Lasith Bhagya</a>. All rights reserved.</p>
     </footer>
 
     <script src="JavaScript/script.js"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
 </body>
 </html>
