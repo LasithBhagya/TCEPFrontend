@@ -5,7 +5,7 @@ let tagList = [];
 async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
 
-    const response = await fetch('https://cors-anywhere.herokuapp.com/https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+    const response = await fetch('https://api.allorigins.win/get?url=https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
