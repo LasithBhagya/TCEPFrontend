@@ -2,7 +2,7 @@ document.getElementById("loadingAnim").style.display = "none";
 var language = "English";
 let tagList = [];
 
-const proxyUrl = 'https://tcep-vercel-proxy.vercel.app/api/proxy';
+const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
 
 async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
