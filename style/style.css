@@ -89,6 +89,7 @@ header > #languageSelector input:focus-visible {
 }
 
 .button-box {
+    display: flex;
     width: auto;
     margin: 0 auto 2em auto;
     position: relative;
@@ -105,6 +106,16 @@ header > #languageSelector input:focus-visible {
     background: linear-gradient(to right, #4CAF50, #09970e);
     border-radius: 1em;
     transition: .5s;
+}
+/* Selection highlight */
+#btn.selected0 {
+    left: 0rem;
+}
+#btn.selected1 {
+    left: calc(100% / 3);
+}
+#btn.selected2 {
+    left: calc(200% / 3);
 }
 
 button.toggle-btn {
@@ -201,9 +212,12 @@ button#sendToAgent {
 }
 
 .container {
-    padding: 4em;
+    margin: 1rem;
+    padding: 3em;
     box-sizing: border-box;
     background-color: #111;
+    border-radius: 2rem;
+    border: 2px dashed #aaa;
 }
 
 #output {
@@ -240,6 +254,56 @@ footer a {
     text-decoration: none;
 }
 
+
+@media (max-width: 500px) {
+    header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    header h1 {
+        font-size: 3rem;
+    }
+    header > #languageSelector {
+        position: relative;
+        width: fit-content;
+        margin-top: 1em;
+        top: 0 !important;
+        right: 0 !important;
+    }
+    .userInputContainer {
+        width: 100%;
+    }
+    #userInput {
+        padding: 1em 0.5em;
+    }
+    .inputBox {
+        width: 60%;
+    }
+    .form-box {
+        width: max-content;
+        row-gap: 2em;
+    }
+    .button-box {
+        width: auto;
+        flex-direction: column;
+        margin-bottom: 1em;
+    }
+    #btn {
+        width: 100%;
+        left: 0 !important;
+        height: calc(100% / 3);
+    }
+    #btn.selected0 {
+        top: 0rem;
+    }
+    #btn.selected1 {
+        top: calc(100% / 3);
+    }
+    #btn.selected2 {
+        top: calc(200% / 3);
+    }
+}
 
 
 /* startup settings */

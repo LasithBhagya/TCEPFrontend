@@ -2,7 +2,7 @@ document.getElementById("loadingAnim").style.display = "none";
 var language = "English";
 let tagList = [];
 
-const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
+// const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
 
 async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
@@ -20,14 +20,15 @@ async function getAIResponse(_prompt) {
     //    return { response: "Error" };
     //});
 
-	const response = await fetch('https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+	const response = await fetch('https://thedummy.app.n8n.cloud/webhook-test/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
         method: "POST",
         headers: {
             'Access-Control-Allow-Origin': '*',
 			'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-			'Access-Control-Allow-Headers': 'Content-Type',
+			'Access-Control-Allow-Headers': 'Content-Type, Magic-Word',
             'Access-Control-Allow-Credentials': 'true',
             'Content-Type': 'application/json',
+            'Magic-Word': 'Abracadabra',
 			// changed some things
         },
         body: JSON.stringify({ _prompt })
@@ -124,7 +125,10 @@ function qna() {
     _qna.style.left = "calc(100% / 3)";
     _shortnotes.style.left = "calc(100% / 3)";
     _mindmaps.style.left = "calc(100% / 3)";
-    _btn.style.left = "0rem";
+    // _btn.style.left = "0rem";
+    _btn.classList.add("selected0");
+    _btn.classList.remove("selected1");
+    _btn.classList.remove("selected2");
 
     _qna.classList.add("active");
     _shortnotes.classList.remove("active");
@@ -136,7 +140,10 @@ function shortnotes() {
     _qna.style.left = "0px";
     _shortnotes.style.left = "0px";
     _mindmaps.style.left = "0px";
-    _btn.style.left = "10rem";
+    // _btn.style.left = "calc(50% - 5rem)";
+    _btn.classList.remove("selected0");
+    _btn.classList.add("selected1");
+    _btn.classList.remove("selected2");
 
     _qna.classList.remove("active");
     _shortnotes.classList.add("active");
@@ -148,7 +155,10 @@ function mindmaps() {
     _qna.style.left = "calc(-100% / 3)";
     _shortnotes.style.left = "calc(-100% / 3)";
     _mindmaps.style.left = "calc(-100% / 3)";
-    _btn.style.left = "20rem";
+    // _btn.style.left = "calc(100% - 10rem)";
+    _btn.classList.remove("selected0");
+    _btn.classList.remove("selected1");
+    _btn.classList.add("selected2");
 
     _qna.classList.remove("active");
     _shortnotes.classList.remove("active");
