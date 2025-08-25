@@ -5,13 +5,15 @@ let tagList = [];
 async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
 
-    const response = await fetch('https://api.allorigins.win/get?url=https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+    const response = await fetch('https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'Magic-Word': 'Abracadabra',
-            'Access-Control-Allow-Origin': 'https://lasithbhagya.github.io/TCEPFrontend/',
-            'Access-Control-Allow-Credentials': 'true'
+            'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+			'Access-Control-Allow-Headers', 'Content-Type, Magic-Word',
+            'Access-Control-Allow-Credentials': 'true',
+			'Magic-Word': 'Abracadabra',
         },
         body: JSON.stringify({ _prompt })
     }).catch((error) => {
