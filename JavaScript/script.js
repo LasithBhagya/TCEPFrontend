@@ -2,16 +2,15 @@ document.getElementById("loadingAnim").style.display = "none";
 var language = "English";
 let tagList = [];
 
+const proxyUrl = 'https://tcep-vercel-proxy.vercel.app/api/proxy';
+
 async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
 
-    const response = await fetch('https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+    const response = await fetch(proxyUrl, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-			'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-            'Access-Control-Allow-Credentials': 'true'
         },
         body: JSON.stringify({ _prompt })
     }).catch((error) => {
