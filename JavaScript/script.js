@@ -9,10 +9,9 @@ async function getAIResponse(_prompt) {
         method: "POST",
         headers: {
             'Content-Type': 'application/json',
-			'Magic-Word': 'Abracadabra',
             'Access-Control-Allow-Origin': '*',
 			'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-			'Access-Control-Allow-Headers', 'Content-Type, Magic-Word',
+			'Access-Control-Allow-Headers', 'Content-Type',
             'Access-Control-Allow-Credentials': 'true'
         },
         body: JSON.stringify({ _prompt })
