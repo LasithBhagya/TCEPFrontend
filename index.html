@@ -38,8 +38,10 @@
             <button type="button" class="toggle-btn" onclick="shortnotes()"><b>Short Notes</b></button>
             <div class="hr"></div>
             <button type="button" class="toggle-btn" onclick="mindmaps()"><b>Mind Maps</b></button>
+            <div class="hr"></div>
+            <button type="button" class="toggle-btn" onclick="chatMode()"><b>Chat</b></button>
         </div>
-        <div class="form-box">
+        <div id="form-box" class="form-box">
             <!-- Q&A -->
             <div id="qna" class="userInputContainer active">
                 <div id="gradeSelector" class="inputRow">
@@ -55,6 +57,8 @@
                         <option value="Combined Mathematics">Combined Mathematics</option>
                         <option value="Physics">Physics</option>
                         <option value="ICT">ICT</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Chemistry">Chemistry</option>
                     </select>
                 </div>
                 <div id="difficulty" class="inputRow">
@@ -97,7 +101,10 @@
                     <label for="subjectsn">Subject</label>
                     <select name="subjectsn" id="subjectsn" class="inputBox" onchange="updateUnitList('SN')" required>
                         <option value="Combined Mathematics">Combined Mathematics</option>
-                        <option value="Physics">Physics</option>
+                        <option value="Physics" selected>Physics</option>
+                        <option value="ICT">ICT</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Chemistry">Chemistry</option>
                     </select>
                 </div>
                 <div id="durationSelector" class="inputRow">
@@ -122,7 +129,10 @@
                     <label for="subjectmm">Subject</label>
                     <select name="subjectmm" id="subjectmm" class="inputBox" onchange="updateUnitList('MM')" required>
                         <option value="Combined Mathematics">Combined Mathematics</option>
-                        <option value="Physics">Physics</option>
+                        <option value="Physics" selected>Physics</option>
+                        <option value="ICT">ICT</option>
+                        <option value="Biology">Biology</option>
+                        <option value="Chemistry">Chemistry</option>
                     </select>
                 </div>
                 <div id="durationSelector" class="inputRow">
@@ -146,21 +156,23 @@
     </div>
 
     <section id="outputSection">
-        <div id="output" class="container"> </div>
+        <div id="output" class="container"></div>
+
+        <div id="chatInput" class="chatInput">
+            <input type="text" name="chatInput" id="chatInputField" class="inputBox" placeholder="Ask aything">
+            <button type="button" id="sendbtn" onclick="chatWithAI()"><img src="img/send.png" alt="send"></button>
+        </div>
 
         <div id="downloadMindMap">
             <button onclick="downloadMindMap()"><img src="img/download.png" alt="download"></button>
         </div>
     </section>
 
-    <!-- <input type="text" name="chatInput" id="chatInput">
-    <button type="button" onclick="chatWithAI()">Send</button> -->
+    <!-- <div id="target"></div> -->
 
-    <div id="target"></div>
-
-    <footer>
+    <!-- <footer>
         <p>&copy; 2025 <a href="https://github.com/LasithBhagya">Lasith Bhagya</a>. All rights reserved.</p>
-    </footer>
+    </footer> -->
 
     <script src="JavaScript/script.js"></script>
 </body>

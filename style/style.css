@@ -117,10 +117,13 @@ header > #languageSelector input:focus-visible {
     left: 0rem;
 }
 #btn.selected1 {
-    left: calc(100% / 3);
+    left: calc(100% / 4);
 }
 #btn.selected2 {
-    left: calc(200% / 3);
+    left: calc(100% / 2);
+}
+#btn.selected3 {
+    left: calc(300% / 4);
 }
 
 button.toggle-btn {
@@ -218,7 +221,7 @@ button#sendToAgent {
 
 .container {
     margin: 1rem;
-    padding: 3em;
+    padding: 3rem 3rem 5rem 3rem;
     box-sizing: border-box;
     background-color: #111;
     border-radius: 2rem;
@@ -232,15 +235,96 @@ button#sendToAgent {
     font-family: "Fredoka", sans-serif;
     font-size: 1rem;
     color: white;
+    max-height: 80vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    /* -ms-overflow-style: none;  IE and Edge */
+    /* scrollbar-width: none;  Firefox */
 }
+/* #output::-webkit-scrollbar {
+    display: none; Chrome
+} */
 
 #output > div > ol, #output > div > ul {
     display: flex;
     flex-direction: column;
     row-gap: 1rem;
 }
+
+#output > .message-box {
+    display: flex;
+    padding: 0.2rem 1rem;
+    width: 100%;
+}
+
+.userMessageBox {
+    justify-content: flex-end;
+}
+.userMessage {
+    background-color: #09970e !important;
+    color: white !important;
+}
+
+#output > .message-box > .message {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0.6rem 2rem;
+    width: fit-content;
+    max-width: 80%;
+    border-radius: 0.4rem;
+    align-self: flex-end;
+    background-color: #444;
+}
+
 svg {
     font-family: "Fredoka", sans-serif !important;
+}
+
+.chatInput {
+    position: relative;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    top: -5rem;
+}
+.chatInput input {
+    width: 70%;
+    height: 3rem;
+    padding: 0.5em 1rem;
+    border-radius: 0.5em;
+    border: none;
+    box-sizing: border-box;
+    background-color: #333;
+    color: white;
+    font-family: "Fredoka", sans-serif;
+    font-size: 1rem;
+}
+.chatInput input:focus {
+    outline: 2px solid #4CAF50;
+}
+.chatInput > button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-left: 0.6rem;
+    border: none;
+    border-radius: 0.5em;
+    background-color: #09970e;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.chatInput > button:hover {
+    background-color: #4CAF50;
+}
+.chatInput > button > img {
+    width: 1.5rem;
+    height: 1.5rem;
+    filter: invert(0.95);
 }
 
 #downloadMindMap {
@@ -342,16 +426,22 @@ footer a {
     #btn {
         width: 100%;
         left: 0 !important;
-        height: calc(100% / 3);
+        height: calc(100% / 4);
     }
     #btn.selected0 {
         top: 0rem;
     }
     #btn.selected1 {
-        top: calc(100% / 3);
+        top: calc(100% / 4);
     }
     #btn.selected2 {
-        top: calc(200% / 3);
+        top: calc(100% / 2);
+    }
+    #btn.selected3 {
+        top: calc(300% / 4);
+    }
+    .container {
+        padding: 2rem 1rem 5rem 1rem;
     }
 }
 
@@ -359,4 +449,29 @@ footer a {
 /* startup settings */
 #qna, #shortnotes, #mindmaps {
     left: calc(100% / 3);
+}
+
+
+
+/* Scrollbar styling */
+/* width */
+::-webkit-scrollbar {
+    width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #4CAF50;
+    border-radius: 2px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #09970e;
 }

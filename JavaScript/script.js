@@ -1,36 +1,52 @@
-mermaid.initialize({ 
-    startOnLoad: true,
-    themeVariables: {
-        fontFamily: 'Fredoka, sans-serif',
-    }
-});
+mermaid.initialize({ startOnLoad: true, themeVariables: { fontFamily: 'Fredoka, sans-serif', } });
 
 
 document.getElementById("loadingAnim").style.display = "none";
-var language = "English";
+let language = "English";
 let tagListSN = [];
 let tagListMM = [];
 
-userID = crypto.randomUUID();
+let mode = 'qna';
+let histories = { qna: "", sn: "", mm: "", chat: {} };
+
+let errorMessage = "We couldn't retrieve the AI response. This might be due to a server issue or<br>a problem with your internet connection. Please try again later.";
+
+// userID = crypto.randomUUID();
+userID = '3b79e111-d4d4-4527-bfe1-dd7a0c2229b1';
 console.log("User ID: " + userID);
 
 // const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
 
-async function getAIResponse(_prompt, isChatInput) {
+// Normal function to get AI response from the backend
+async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
 
-    // const response = await fetch(proxyUrl, {
-    //     method: "POST",
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({ _prompt })
-    // }).catch((error) => {
-    //     console.error('Error fetching AI response:', error)
-    //     document.getElementById("loadingAnim").style.display = "none";
-    //     showAnError("We couldn't retrieve the AI response. This might be due to a server issue or<br>a problem with your internet connection. Please try again later.");
-    //    return { response: "Error" };
-    //});
+	const response = await fetch('https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+        method: "POST",
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+			'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+			'Access-Control-Allow-Headers': 'Content-Type, Magic-Word',
+            'Access-Control-Allow-Credentials': 'true',
+            'Content-Type': 'application/json',
+            'Magic-Word': 'Abracadabra',
+        },
+        body: JSON.stringify({ 'userID': userID, 'chatInput': false, 'prompt': _prompt })
+    }).catch((error) => {
+        console.error('Error fetching AI response:', error)
+        document.getElementById("loadingAnim").style.display = "none";
+        showAnError(errorMessage);
+        return { response: "Error" };
+    });
+
+    const data = await response.json();
+    console.log(data, response.status);
+    document.getElementById("loadingAnim").style.display = "none";
+    return data.output;
+}
+
+async function sendAMessage(_prompt, messageBox) {
+    console.log("waiting for the AI response...");
 
 	const response = await fetch('https://thedummy.app.n8n.cloud/webhook-test/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
         method: "POST",
@@ -41,29 +57,21 @@ async function getAIResponse(_prompt, isChatInput) {
             'Access-Control-Allow-Credentials': 'true',
             'Content-Type': 'application/json',
             'Magic-Word': 'Abracadabra',
-			// changed some things
         },
-        body: JSON.stringify({ 'userID': userID, 'chatInput': isChatInput, 'prompt': _prompt })
+        body: JSON.stringify({ 'userID': userID, 'chatInput': true, 'prompt': _prompt })
     }).catch((error) => {
         console.error('Error fetching AI response:', error)
         document.getElementById("loadingAnim").style.display = "none";
-        showAnError("We couldn't retrieve the AI response. This might be due to a server issue or<br>a problem with your internet connection. Please try again later.");
+        showAnErrorMessage(messageBox, errorMessage);
+        histories['chat'][`"${errorMessage}"`] = 'ai';
         return { response: "Error" };
     });
 
     const data = await response.json();
-    console.log(data);
-    console.log(response.status);
+    console.log(data, response.status);
     document.getElementById("loadingAnim").style.display = "none";
     return data.output;
 }
-
-// document.getElementById("sendToAgent").addEventListener("click", () => {
-//     document.getElementById("loadingAnim").style.display = "block";
-//     getAIResponse(_prompt).then(result => {
-//         document.getElementById("output").innerHTML = result;
-//     });
-// });
 
 document.getElementById("language").addEventListener("change", (event) => {
     event.target.checked ? language = "Sinhala" : language = "English";
@@ -77,16 +85,30 @@ function showAnError(error) {
     document.getElementById("output").style.alignItems = "center";
     document.getElementById("output").style.textAlign = "center";
 }
+function showAnErrorMessage(messageBox, error) {
+    messageBox.querySelector('div').innerHTML = error;
+    messageBox.querySelector('div').style.color = "#ff2929ff";
+    messageBox.querySelector('div').style.alignItems = "center";
+
+    messageBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
 
 
-function generate(_prompt, _reload, isChatInput = false) {
+function generate(_prompt, _reload) {
     document.getElementById("loadingAnim").style.display = "flex";
-    getAIResponse(_prompt, isChatInput).then(result => {
+
+    if (document.getElementById("output").hasAttribute('data-processed')) document.getElementById("output").removeAttribute('data-processed');
+
+    getAIResponse(_prompt).then(result => {
         document.getElementById("output").innerHTML = result;
         document.getElementById("output").style.color = "white";
         document.getElementById("output").style.alignItems = "flex-start";
         document.getElementById("output").style.textAlign = "left";
-        MathJax.typeset();  // LaTeX rendering (MathJax)
+
+        if (mode === 'chat') histories[mode].push(result);
+        else histories[mode] = result;
+
+        // MathJax.typeset();  // LaTeX rendering (MathJax)
         switch (_reload) {
             case "m":
                 mermaid.run();  // Mermaid rendering
@@ -109,7 +131,7 @@ function generateQnA() {
     const _prompt = `Generate ${noq} ${difficulty} difficulty level questions within the ${syllabusSection} of the ${grade} ${subject} Syllabus in only ${language} language.`;
     generate(_prompt, 'l');
 
-    console.log('Selected variables:', grade, subject, difficulty, noq, syllabusSection);
+    // console.log('Selected variables:', grade, subject, difficulty, noq, syllabusSection);
     console.log('Prompt:', _prompt);
 }
 function generateShortNotes() {
@@ -120,7 +142,7 @@ function generateShortNotes() {
     if (units.length !== 0) {
         const _prompt = `Generate a short note on ${units} unit(s) of ${grade} ${subject} in only ${language} language.`;
         generate(_prompt, 'l');
-        console.log('Selected variables:', grade, subject, units);
+        // console.log('Selected variables:', grade, subject, units);
         console.log('Prompt:', _prompt);
     } else {
         showAnError("Please select at least one unit.");
@@ -130,31 +152,95 @@ function generateMindMaps() {
     const grade = document.getElementById('grademm').value;
     const subject = document.getElementById("subjectmm").value;
     const units = tagListMM.join(', ');
+    console.log(units);
 
     if (units.length !== 0) {
         const _prompt = `Generate a mind map containing every important part on ${units} unit(s) of the ${grade} ${subject} in only ${language} language. (strictly follow the guidelines provided in the System Message)`;
         document.getElementById("output").classList.add('mermaid');
         generate(_prompt, 'm');
-        console.log('Selected variables:', grade, subject, units);
+        // console.log('Selected variables:', grade, subject, units);
         console.log('Prompt:', _prompt);
     } else {
         showAnError('Please select at least one unit.');
     }
 }
 function chatWithAI() {
-    const chatInput = document.getElementById("chatInput").value;
+    const chatInput = document.getElementById("chatInputField").value;
+    const _prompt = `${chatInput}. Respond only in ${language} language.`;
 
-    if (chatInput.trim().length === 0) {
-        showAnError("Please enter a message to send to the AI.");
-        return;
-    }
+    if (chatInput === '') return; 
 
-    const _prompt = `${chatInput}. Respond in only ${language} language.`;
-    generate(_prompt, 'l', true);
+    const userMessageBox = document.createElement('div');
+    document.getElementById("output").appendChild(userMessageBox);
+    userMessageBox.classList.add('message-box', 'userMessageBox');
+    userMessageBox.innerHTML = `<div class="message userMessage"><span>${chatInput}</span></div>`;
+    histories['chat'][`"${chatInput}"`] = 'user';
+
+    const messageBox = document.createElement('div');
+    document.getElementById("output").appendChild(messageBox);
+    messageBox.classList.add('message-box');
+    messageBox.innerHTML = `<div class="message"><l-dot-pulse size="40" speed="1.2" color="white" ></l-dot-pulse></div>`;
+
+    sendAMessage(_prompt, messageBox).then(result => {
+        // Append user message
+        messageBox.innerHTML = `<div class="message"><span>${result}</span></div>`;
+        histories['chat'][`"${result}"`] = 'ai';
+        MathJax.typeset();  // LaTeX rendering (MathJax)
+        // Scroll to the bottom of the output div
+        messageBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    messageBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
     console.log('Chat Input:', chatInput);
-    document.getElementById("chatInput").value = ''; // Clear input field after sending
+    console.log('Prompt:', _prompt);
+    document.getElementById("chatInputField").value = ""; // Clear input field after sending
 }
 
+
+// Add an event listener for the 'keydown' event
+document.getElementById('chatInputField').addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+        // Prevent the default form submission behavior (if the input is inside a form)
+        event.preventDefault(); 
+        
+        // Execute your desired function or action here
+        console.log('Enter key pressed in the input field!');
+        // Trigger the send button click
+        document.getElementById('sendbtn').click(); 
+    }
+});
+
+
+// Render history
+function recoverHistory(){
+    document.getElementById('output').innerHTML = "";
+    if (document.getElementById("output").hasAttribute('data-processed')) document.getElementById("output").removeAttribute('data-processed');
+
+    if (mode !== 'chat') {
+        document.getElementById('output').innerHTML = histories[mode];
+        if (mode !== 'mm') document.getElementById('output').classList.remove('mermaid')
+    }
+    else {
+        for (const message in histories['chat']) {
+            const messageBox = document.createElement('div');
+            document.getElementById("output").appendChild(messageBox);
+            messageBox.classList.add('message-box');
+            if (histories['chat'][message] === 'user') {
+                messageBox.classList.add('userMessageBox');
+                messageBox.innerHTML = `<div class="message userMessage"><span>${message.replaceAll('"', '')}</span></div>`;
+            } else {
+                messageBox.innerHTML = `<div class="message"><span>${message.replaceAll('"', '')}</span></div>`;
+            }
+        }
+    }
+
+    if (mode === 'mm' && histories[mode] !== "") {
+        document.getElementById('output').classList.add('mermaid');
+        mermaid.run();
+    }
+    else MathJax.typeset();
+}
+recoverHistory();
 
 
 // Download mind map as an PNG file
@@ -204,11 +290,6 @@ function downloadMindMap() {
 }
 
 
-// getAIResponse(_prompt).then(result => {
-//     document.getElementById("output").innerHTML = result;
-// });
-
-
 
 // UI Handling
 var _btn = document.getElementById("btn");
@@ -217,58 +298,84 @@ var _shortnotes = document.getElementById("shortnotes");
 var _mindmaps = document.getElementById("mindmaps");
 
 function qna() {
+    mode = 'qna';
+    document.getElementById("form-box").style.display = "flex";
     _qna.style.left = "calc(100% / 3)";
     _shortnotes.style.left = "calc(100% / 3)";
     _mindmaps.style.left = "calc(100% / 3)";
-    // _btn.style.left = "0rem";
     _btn.classList.add("selected0");
     _btn.classList.remove("selected1");
     _btn.classList.remove("selected2");
+    _btn.classList.remove("selected3");
 
     _qna.classList.add("active");
     _shortnotes.classList.remove("active");
     _mindmaps.classList.remove("active");
     console.log("Q&A");
 
-    // Disable the download button
-    document.getElementById("downloadMindMap").style.display = "none";
+    document.getElementById("downloadMindMap").style.display = "none"; // Disable the download button
+    document.getElementById("chatInput").style.display = "none"; // Hide chat section
+    recoverHistory();
 }
 
 function shortnotes() {
+    mode = 'sn';
+    document.getElementById("form-box").style.display = "flex";
     _qna.style.left = "0px";
     _shortnotes.style.left = "0px";
     _mindmaps.style.left = "0px";
-    // _btn.style.left = "calc(50% - 5rem)";
     _btn.classList.remove("selected0");
     _btn.classList.add("selected1");
     _btn.classList.remove("selected2");
+    _btn.classList.remove("selected3");
 
     _qna.classList.remove("active");
     _shortnotes.classList.add("active");
     _mindmaps.classList.remove("active");
     console.log("Short Notes");
 
-    // Disable the download button
-    document.getElementById("downloadMindMap").style.display = "none";
+    document.getElementById("downloadMindMap").style.display = "none"; // Disable the download button
+    document.getElementById("chatInput").style.display = "none"; // Hide chat section
+    recoverHistory();
 }
 
 function mindmaps() {
+    mode = 'mm';
+    document.getElementById("form-box").style.display = "flex";
     _qna.style.left = "calc(-100% / 3)";
     _shortnotes.style.left = "calc(-100% / 3)";
     _mindmaps.style.left = "calc(-100% / 3)";
-    // _btn.style.left = "calc(100% - 10rem)";
     _btn.classList.remove("selected0");
     _btn.classList.remove("selected1");
     _btn.classList.add("selected2");
+    _btn.classList.remove("selected3");
 
     _qna.classList.remove("active");
     _shortnotes.classList.remove("active");
     _mindmaps.classList.add("active");
     console.log("Mind Maps");
 
-    // Enable the download button
-    document.getElementById("downloadMindMap").style.display = "block";
-    document.getElementById("output").innerHTML = ' ';
+    document.getElementById("downloadMindMap").style.display = "block"; // Enable the download button
+    document.getElementById("chatInput").style.display = "none"; // Hide chat section
+    recoverHistory();
+}
+
+function chatMode() {
+    mode = 'chat';
+    document.getElementById("form-box").style.display = "none";
+    _btn.classList.remove("selected0");
+    _btn.classList.remove("selected1");
+    _btn.classList.remove("selected2");
+    _btn.classList.add("selected3");
+
+    _qna.classList.remove("active");
+    _shortnotes.classList.remove("active");
+    _mindmaps.classList.remove("active");
+    console.log("Chat");
+
+    document.getElementById("downloadMindMap").style.display = "none"; // Disable the download button
+    document.getElementById("chatInput").style.display = "flex"; // Show chat section
+    recoverHistory();
 }
 
 
@@ -293,12 +400,13 @@ function updateUnitList(key) {
     }
 
     // Clear existing options
-    unitSelect.innerHTML = '';
+    unitSelect.innerHTML = "";
     // Clear the tag list and displayed tags
     if (key === 'SN') tagListSN = [];
     else tagListMM = [];
-    // document.getElementById("unitSelection").innerHTML = '';
-    unitSelection.innerHTML = '';
+    unitSelection.innerHTML = "";
+
+    // NEED ATTENTION ................................................................................................................................................
 
     // Define unit options based on grade and subject
     let units = {};
@@ -350,6 +458,28 @@ function updateUnitList(key) {
                 'Mechanics',
                 'Oscillations and Waves',
                 'Thermal Physics'
+            ],
+        };
+    } else if ((grade === "grade 12" || grade === "grade 13") && subject === "ICT") {
+        units = {
+            '': [
+                'Select the units you want'
+            ],
+            'ICT syllabus': [
+                'Concept of ICT',
+                'Introduction to Computers',
+                'Data Representation',
+                'Fundamental of Digital Circuits',
+                'Computer Operating Systems',
+                'Data Communication and Networking',
+                'System Analysis and Design',
+                'Database Management',
+                'Programming',
+                'Web Development',
+                'Internet of Things (IoT)',
+                'ICT in Business',
+                'New trends and Future Directions of ICT',
+                'Project'
             ],
         };
     } else if (grade === "grade 13" && subject === "Combined Mathematics") {
@@ -484,8 +614,8 @@ function addTag(key) {
 
         // Enable the option back in the dropdown
         enableOption(selectedUnit, unitSelect);
-        if (key === 'SN') tagListSN.pop(selectedUnit);
-        else tagListMM.pop(selectedUnit);
+        if (key === 'SN') tagListSN = tagListSN.filter(item => item !== selectedUnit);
+        else tagListMM = tagListMM.filter(item => item !== selectedUnit);
     };
 
     tag.appendChild(closeButton);
