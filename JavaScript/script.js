@@ -11,9 +11,12 @@ var language = "English";
 let tagListSN = [];
 let tagListMM = [];
 
+userID = crypto.randomUUID();
+console.log("User ID: " + userID);
+
 // const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
 
-async function getAIResponse(_prompt) {
+async function getAIResponse(_prompt, isChatInput) {
     console.log("waiting for the AI response...");
 
     // const response = await fetch(proxyUrl, {
@@ -40,7 +43,7 @@ async function getAIResponse(_prompt) {
             'Magic-Word': 'Abracadabra',
 			// changed some things
         },
-        body: JSON.stringify({ _prompt })
+        body: JSON.stringify({ 'userID': userID, 'chatInput': isChatInput, 'prompt': _prompt })
     }).catch((error) => {
         console.error('Error fetching AI response:', error)
         document.getElementById("loadingAnim").style.display = "none";
@@ -76,9 +79,9 @@ function showAnError(error) {
 }
 
 
-function generate(_prompt, _reload) {
+function generate(_prompt, _reload, isChatInput = false) {
     document.getElementById("loadingAnim").style.display = "flex";
-    getAIResponse(_prompt).then(result => {
+    getAIResponse(_prompt, isChatInput).then(result => {
         document.getElementById("output").innerHTML = result;
         document.getElementById("output").style.color = "white";
         document.getElementById("output").style.alignItems = "flex-start";
@@ -137,6 +140,19 @@ function generateMindMaps() {
     } else {
         showAnError('Please select at least one unit.');
     }
+}
+function chatWithAI() {
+    const chatInput = document.getElementById("chatInput").value;
+
+    if (chatInput.trim().length === 0) {
+        showAnError("Please enter a message to send to the AI.");
+        return;
+    }
+
+    const _prompt = `${chatInput}. Respond in only ${language} language.`;
+    generate(_prompt, 'l', true);
+    console.log('Chat Input:', chatInput);
+    document.getElementById("chatInput").value = ''; // Clear input field after sending
 }
 
 
