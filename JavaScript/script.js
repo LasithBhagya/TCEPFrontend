@@ -16,12 +16,13 @@ userID = '3b79e111-d4d4-4527-bfe1-dd7a0c2229b1';
 console.log("User ID: " + userID);
 
 // const proxyUrl = 'https://cors-anywhere.herokuapp.com/https://tcep-vercel-proxy.vercel.app/api/proxy';
+const n8nURL = 'https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7';
 
 // Normal function to get AI response from the backend
 async function getAIResponse(_prompt) {
     console.log("waiting for the AI response...");
 
-	const response = await fetch('https://thedummy.app.n8n.cloud/webhook/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+	const response = await fetch(n8nURL, {
         method: "POST",
         headers: {
             'Access-Control-Allow-Origin': '*',
@@ -48,7 +49,7 @@ async function getAIResponse(_prompt) {
 async function sendAMessage(_prompt, messageBox) {
     console.log("waiting for the AI response...");
 
-	const response = await fetch('https://thedummy.app.n8n.cloud/webhook-test/0c2588ad-0a69-4a5a-8a55-571fe5789ba7', {
+	const response = await fetch(n8nURL, {
         method: "POST",
         headers: {
             'Access-Control-Allow-Origin': '*',
