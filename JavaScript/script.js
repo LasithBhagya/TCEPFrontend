@@ -1,6 +1,5 @@
 mermaid.initialize({ startOnLoad: true, themeVariables: { fontFamily: 'Fredoka, sans-serif', } });
 
-
 document.getElementById("loadingAnim").style.display = "none";
 let language = "English";
 let tagListSN = [];
@@ -273,10 +272,20 @@ function downloadMindMap() {
         ctx.drawImage(img, 0, 0, rect.width, rect.height);
 
         // Trigger download
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0'); // Add 1 and pad
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+
+        // const timeStamp = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+
         const pngUrl = canvas.toDataURL('image/png');
         const link = document.createElement('a');
         link.href = pngUrl;
-        link.download = 'mindmap.png';
+        link.download = `mindmap-${year}-${month}-${day}_${hours}-${minutes}-${seconds}.png`;
         link.click();
 
         URL.revokeObjectURL(url);
@@ -411,125 +420,13 @@ function updateUnitList(key) {
 
     // Define unit options based on grade and subject
     let units = {};
-    if (grade === "grade 12" && subject === "Combined Mathematics") {
-        units = {
-            '': [
-                'Select the units you want'
-            ],
-            'First Term': [
-                'Real numbers',
-                'Functions',
-                'Angular measurements',
-                'Rectangular cartesian system, Straight line',
-                'Circular functions',
-                'sine rule, cosine rule',
-                'Polynomials',
-                'Trigonometric identities',
-                'Rational functions',
-                'Index laws and logarithmic laws',
-                'Basic properties of inequalities and solutions of inequalities',
-                'Solving trigonometric equations',
-                'Vectors',
-                'Systems of coplanar forces acting at a point'
-            ],
-            'Second Term': [
-                'Quadratic functions and quadratic equations',
-                'Inverse trigonometric functions',
-                'Limits',
-                'System of coplanar forces acting on a rigid body',
-                'Motion in a straight line'
-            ],
-            'Third Term': [
-                'Derivatives',
-                'Applications of derivatives',
-                'Projectiles',
-                'Equilibirium of three coplanar forces',
-                'Friction',
-                'Relative mortion',
-                "Newton's laws of motion"
-            ]
-        };
-    } else if (grade === "grade 12" && subject === "Physics") {
-        units = {
-            '': [
-                'Select the units you want'
-            ],
-            'Grade 12 Physics syllabus': [
-                'Measurement',
-                'Mechanics',
-                'Oscillations and Waves',
-                'Thermal Physics'
-            ],
-        };
-    } else if ((grade === "grade 12" || grade === "grade 13") && subject === "ICT") {
-        units = {
-            '': [
-                'Select the units you want'
-            ],
-            'ICT syllabus': [
-                'Concept of ICT',
-                'Introduction to Computers',
-                'Data Representation',
-                'Fundamental of Digital Circuits',
-                'Computer Operating Systems',
-                'Data Communication and Networking',
-                'System Analysis and Design',
-                'Database Management',
-                'Programming',
-                'Web Development',
-                'Internet of Things (IoT)',
-                'ICT in Business',
-                'New trends and Future Directions of ICT',
-                'Project'
-            ],
-        };
-    } else if (grade === "grade 13" && subject === "Combined Mathematics") {
-        units = {
-            '': [
-                'Select the units you want'
-            ],
-            'First Term': [
-                'Straight line',
-                'Intergration',
-                'Jointed rods',
-                'Frame works',
-                'Impulse and collision',
-                'Work, power, energy',
-                'Circular rotion'
-            ],
-            'Second Term': [
-                'Circle',
-                'Permutations and Combinations',
-                'Principle of Mathematical Induction',
-                'Series',
-                'Probability',
-                'Simple harmonic motion',
-                'Center of mass'
-            ],
-            'Third Term': [
-                'Binomial expansion',
-                'Complex numbers',
-                'Matrices',
-                'Probability',
-                'Statistics'
-            ]
-        };
-    } else if (grade === "grade 13" && subject === "Physics") {
-        units = {
-            '': [
-                'Select the units you want'
-            ],
-            'Grade 13 Physics syllabus': [
-                'Gravitational Field',
-                'Electrostatic field',
-                'Magnetic Field',
-                'Current Electricity',
-                'Electronics',
-                'Mechanical Properties of Matter',
-                'Matter and Radiation'
-            ],
-        };
-    }
+    if (grade === "grade 12" && subject === "Combined Mathematics") units = CM12;
+    else if (grade === "grade 12" && subject === "Physics") units = Phy12;
+    else if ((grade === "grade 12" || grade === "grade 13") && subject === "ICT") units = ICTAL;
+    else if (grade === "grade 12" && subject === "Chemistry") units = Chem12;
+    else if (grade === "grade 13" && subject === "Combined Mathematics") units = CM13;
+    else if (grade === "grade 13" && subject === "Physics") units = Phy13;
+    else if (grade === "grade 13" && subject === "Chemistry") units = Chem13;
 
     // Loop through the 'units' object to create <optgroup> and <option> elements
     for (const term in units) {

@@ -220,7 +220,7 @@ button#sendToAgent {
 }
 
 .container {
-    margin: 1rem;
+    margin: 1rem 3rem;
     padding: 3rem 3rem 5rem 3rem;
     box-sizing: border-box;
     background-color: #111;
@@ -441,7 +441,11 @@ footer a {
         top: calc(300% / 4);
     }
     .container {
-        padding: 2rem 1rem 5rem 1rem;
+        margin: 1rem;
+        padding: 2rem 2rem 5rem 2rem;
+    }
+    .message-box {
+        padding: 0rem !important;
     }
 }
 
