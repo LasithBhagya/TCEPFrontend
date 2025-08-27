@@ -500,6 +500,7 @@ function chatMode() {
     document.getElementById("chatInput").style.display = "flex"; // Show chat section
     document.getElementById("attachFiles").style.display = "flex"; // Show attach section
     recoverHistory();
+    document.getElementById('chatInputField').focus(); // Keep the focus on the input field
 }
 
 

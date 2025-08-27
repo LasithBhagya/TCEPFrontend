@@ -15,9 +15,21 @@ header {
     text-align: center;
     padding: 2em;
 }
+header .title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+header img {
+    width: 4rem;
+    height: 4rem;
+}
 header h1 {
     font-size: 4rem;
-    margin-bottom: 0.2em;
+    color: #4CAF50;
 }
 header p {
     font-size: 0.8rem;
@@ -238,6 +250,7 @@ button#sendToAgent {
     max-height: 80vh;
     overflow-y: scroll;
     overflow-x: hidden;
+    scroll-behavior: smooth;
 
     /* -ms-overflow-style: none;  IE and Edge */
     /* scrollbar-width: none;  Firefox */
@@ -272,9 +285,9 @@ button#sendToAgent {
     padding: 1rem 2rem;
     width: fit-content;
     max-width: 80%;
-    border-radius: 0.4rem;
+    border-radius: 2rem;
     align-self: flex-end;
-    background-color: #444;
+    background-color: #222;
 }
 
 svg {
@@ -336,6 +349,9 @@ svg {
     flex-direction: column;
     align-items: center;
     width: auto;
+    margin: 1rem 3rem;
+    padding: 3rem;
+    box-sizing: border-box;
     position: relative;
     box-sizing: border-box;
     border: 2px dashed #444;
@@ -350,7 +366,7 @@ svg {
     z-index: 1000;
 }
 #attachFiles > label {
-    padding: 1rem 2rem;
+    padding-bottom: 1rem;
     text-align: center;
     cursor: pointer;
 }
@@ -421,6 +437,10 @@ footer a {
         flex-direction: column;
         align-items: center;
     }
+    header img {
+        width: 3rem;
+        height: 3rem;
+    }
     header h1 {
         font-size: 3rem;
     }
@@ -477,6 +497,9 @@ footer a {
     .container {
         margin: 1rem;
         padding: 2rem 2rem 5rem 2rem;
+    }
+    #attachFiles {
+        margin: 1rem;
     }
     .message-box {
         padding: 0rem !important;
