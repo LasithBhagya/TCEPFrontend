@@ -14,6 +14,7 @@
         <!-- mermaid.initialize({ startOnLoad: true }); -->
     <!-- </script> -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
     <title>QWits - AI powered learning assistant</title>
 </head>
 <body>
@@ -153,15 +154,21 @@
     </div>
 
     <section id="outputSection">
+        <div id="attachFiles" class="attachFiles container">
+            <label for="attachPDF">Drag & Drop or Choose a file<br><img class="clipImage" src="img/attach.png" alt="attach"></label>
+            <input type="file" accept=".pdf" name="attachPDF" id="attachPDF" title="Attach a PDF" onchange="attachPDF()">
+            <span id="custom-text">No file chosen, yet.</span>
+        </div>
+        
         <div id="output" class="container"></div>
 
         <div id="chatInput" class="chatInput">
             <input type="text" name="chatInput" id="chatInputField" class="inputBox" placeholder="Ask aything">
-            <button type="button" id="sendbtn" onclick="chatWithAI()"><img src="img/send.png" alt="send"></button>
+            <button type="button" id="sendbtn" title="Send" onclick="chatWithAI()"><img src="img/send.png" alt="send"></button>
         </div>
 
         <div id="downloadMindMap">
-            <button onclick="downloadMindMap()"><img src="img/download.png" alt="download"></button>
+            <button title="Download" onclick="downloadMindMap()"><img src="img/download.png" alt="download"></button>
         </div>
     </section>
 

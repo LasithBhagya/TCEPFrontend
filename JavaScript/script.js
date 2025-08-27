@@ -8,6 +8,9 @@ let tagListMM = [];
 let mode = 'qna';
 let histories = { qna: "", sn: "", mm: "", chat: {} };
 
+let extractedText = ''; // To store extracted text from PDF
+let finishedReading = false; // Flag to indicate if PDF reading is finished
+
 let errorMessage = "We couldn't retrieve the AI response. This might be due to a server issue or<br>a problem with your internet connection. Please try again later.";
 
 // userID = crypto.randomUUID();
@@ -166,7 +169,7 @@ function generateMindMaps() {
 }
 function chatWithAI() {
     const chatInput = document.getElementById("chatInputField").value;
-    const _prompt = `${chatInput}. Respond only in ${language} language.`;
+    let _prompt = `${chatInput}. Respond only in ${language} language.`;
 
     if (chatInput === '') return; 
 
@@ -181,6 +184,9 @@ function chatWithAI() {
     messageBox.classList.add('message-box');
     messageBox.innerHTML = `<div class="message"><l-dot-pulse size="40" speed="1.2" color="white" ></l-dot-pulse></div>`;
 
+    if (extractedText !== '') {
+        _prompt = `${chatInput}. Respond only in ${language} language. Use the following information extracted from the attached PDF file to answer the question more accurately: ${extractedText}`;
+    }
     sendAMessage(_prompt, messageBox).then(result => {
         // Append user message
         messageBox.innerHTML = `<div class="message"><span>${result}</span></div>`;
@@ -300,6 +306,110 @@ function downloadMindMap() {
 }
 
 
+// Extract text from PDF file using pdf.js (something is wrong in the function. moved the code to the attachPDF function)
+function extractTextFromPDF(file) {
+    const reader = new FileReader();
+
+    reader.onload = function() {
+        const pdfData = new Uint8Array(reader.result);
+
+        // Load PDF using pdf.js
+        pdfjsLib.getDocument(pdfData).promise.then(pdf => {
+            let extractedText = '';
+
+            // Loop through each page in the PDF
+            const extractPageText = async (pageNum) => {
+                if (pageNum > pdf.numPages) {
+                    // console.log(extractedText); // All text extracted
+                    return extractedText;
+                }
+
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
+                
+                // Append the text from each item
+                textContent.items.forEach(item => {
+                    extractedText += item.str + ' ';
+                });
+
+                extractPageText(pageNum + 1); // Recursively process the next page
+            };
+
+            // Start extracting text from the first page
+            extractPageText(1);
+        }).catch(error => {
+            console.error('Error loading PDF: ', error);
+        });
+    };
+
+    reader.readAsArrayBuffer(file);
+}
+
+// Attach a PDF file
+function attachPDF() {
+    const fileInput = document.getElementById('attachPDF');
+    const customText = document.getElementById('custom-text');
+
+    fileInput.onchange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            console.log("Selected PDF file:", file);
+            customText.innerText = 'Reading the PDF...';
+            console.log("File size (bytes):", file.size);
+            console.log("File type:", file.type);
+
+
+            // process the uploaded file as needed
+
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                const pdfData = new Uint8Array(reader.result);
+
+                // Load PDF using pdf.js
+                pdfjsLib.getDocument(pdfData).promise.then(pdf => {
+                    // Loop through each page in the PDF
+                    const extractPageText = async (pageNum) => {
+                        if (pageNum > pdf.numPages) {
+                            // console.log(extractedText); // All text extracted
+                            finishedReading = true;
+                            console.log("Finished reading the PDF.");
+                            customText.innerText = file.name;
+                            document.getElementById('attachFiles').style.border = "2px dashed #00970e"; // Change border color to indicate success
+                            return;
+                        }
+
+                        const page = await pdf.getPage(pageNum);
+                        const textContent = await page.getTextContent();
+                        
+                        // Append the text from each item
+                        textContent.items.forEach(item => {
+                            extractedText += item.str + ' ';
+                        });
+
+                        extractPageText(pageNum + 1); // Recursively process the next page
+                    };
+
+                    // Start extracting text from the first page
+                    extractPageText(1);
+                }).catch(error => {
+                    console.error('Error loading PDF: ', error);
+                });
+            };
+
+            reader.readAsArrayBuffer(file);
+
+            // const data = extractTextFromPDF(file);
+        } else {
+            customText.innerText = "No file chosen, yet";
+            document.getElementById('attachFiles').style.border = "2px dashed #444"; // Change border color to indicate success
+        }
+    };
+
+    // input.click();
+}
+
+
 
 // UI Handling
 var _btn = document.getElementById("btn");
@@ -325,6 +435,7 @@ function qna() {
 
     document.getElementById("downloadMindMap").style.display = "none"; // Disable the download button
     document.getElementById("chatInput").style.display = "none"; // Hide chat section
+    document.getElementById("attachFiles").style.display = "none"; // Hide attach section
     recoverHistory();
 }
 
@@ -346,6 +457,7 @@ function shortnotes() {
 
     document.getElementById("downloadMindMap").style.display = "none"; // Disable the download button
     document.getElementById("chatInput").style.display = "none"; // Hide chat section
+    document.getElementById("attachFiles").style.display = "none"; // Hide attach section
     recoverHistory();
 }
 
@@ -367,6 +479,7 @@ function mindmaps() {
 
     document.getElementById("downloadMindMap").style.display = "block"; // Enable the download button
     document.getElementById("chatInput").style.display = "none"; // Hide chat section
+    document.getElementById("attachFiles").style.display = "none"; // Hide attach section
     recoverHistory();
 }
 
@@ -385,6 +498,7 @@ function chatMode() {
 
     document.getElementById("downloadMindMap").style.display = "none"; // Disable the download button
     document.getElementById("chatInput").style.display = "flex"; // Show chat section
+    document.getElementById("attachFiles").style.display = "flex"; // Show attach section
     recoverHistory();
 }
 
