@@ -245,9 +245,7 @@ function recoverHistory(){
         mermaid.run();
     }
     else {
-		if (MathJax.typeset()) {
-			MathJax.typeset();
-		};
+		MathJax.typeset();
 	}
 }
 recoverHistory();
