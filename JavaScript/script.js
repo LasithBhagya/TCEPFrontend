@@ -245,9 +245,9 @@ function recoverHistory(){
         mermaid.run();
     }
     else {
-		document.addEventListener("DOMContentLoaded", () => {
+		if (MathJax.typeset()) {
 			MathJax.typeset();
-		});
+		};
 	}
 }
 recoverHistory();
