@@ -248,7 +248,7 @@ function recoverHistory(){
 		MathJax.typeset();
 	}
 }
-recoverHistory();
+//recoverHistory();
 
 
 // Download mind map as an PNG file
