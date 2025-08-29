@@ -7,19 +7,6 @@
     <link rel="icon" href="img/qwits logo.png" type="image/x-icon">
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/quantum.js"></script>
     <script type="module" src="https://cdn.jsdelivr.net/npm/ldrs/dist/auto/dotPulse.js"></script>
-    <script>
-      window.MathJax = {
-          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-          startup: {
-              ready: () => {
-                  MathJax.startup.defaultReady();
-                  console.log("MathJax is ready.");
-                  // now typeset() is available
-                  MathJax.typeset = MathJax.typesetPromise;
-              }
-          }
-      };
-    </script>
     <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -192,6 +179,20 @@
         <p>&copy; 2025 <a href="https://github.com/LasithBhagya">Lasith Bhagya</a>. All rights reserved.</p>
     </footer> -->
 
+    <script>
+      window.MathJax = {
+          tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+          startup: {
+              ready: () => {
+                  MathJax.startup.defaultReady();
+                  console.log("MathJax is ready.");
+                  // now typeset() is available
+                  MathJax.typeset = MathJax.typesetPromise;
+              }
+          }
+      };
+    </script>
+    
     <script src="JavaScript/unitList.js"></script>
     <script src="JavaScript/script.js"></script>
 </body>
