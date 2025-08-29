@@ -13,6 +13,7 @@
           startup: {
               ready: () => {
                   MathJax.startup.defaultReady();
+                  console.log("MathJax is ready.");
                   // now typeset() is available
                   MathJax.typeset = MathJax.typesetPromise;
               }
