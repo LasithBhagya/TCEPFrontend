@@ -244,7 +244,11 @@ function recoverHistory(){
         document.getElementById('output').classList.add('mermaid');
         mermaid.run();
     }
-    else MathJax.typeset();
+    else {
+		document.addEventListener("DOMContentLoaded", () => {
+			MathJax.typeset();
+		}
+	}
 }
 recoverHistory();
 
