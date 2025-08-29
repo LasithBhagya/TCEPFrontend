@@ -247,7 +247,7 @@ function recoverHistory(){
     else {
 		document.addEventListener("DOMContentLoaded", () => {
 			MathJax.typeset();
-		}
+		});
 	}
 }
 recoverHistory();
